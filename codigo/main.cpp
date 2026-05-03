@@ -33,17 +33,41 @@ int main() {
 
     while (getline(archivoDelMapa, linea)) {
         if (linea.empty() || linea[0] == '#') continue;
+        stringstream lectorDeLinea(linea);
+        int origen, destino;
 
-        stringstream ss(linea);
-        if (ss >> origen >> destino) {
-            // Guardamos la conexión: del origen al destino
+        if (lectorDeLinea >> origen >> destino) {
+            int nodoMax = (origen > destino) ? origen : destino;
+            if (nodoMax >= (int)mapaDeConexiones.size()) {
+                mapaDeConexiones.resize(nodoMax + 1);
+            }
+
             mapaDeConexiones[origen].push_back(destino);
+            mapaDeConexiones[destino].push_back(origen); // calles bidireccionales
             cantidadDeCalles++;
         }
     }
 
-    cout << "Se han cargado con exito" << cantidadDeCalles << " conexiones en el mapa." << endl;
+    cout << "Se han cargado con exito " << cantidadDeCalles << " conexiones en el mapa." << endl;
     
     archivoDelMapa.close();
+    // esto es para verificar que no solo cargo los datos, sino que puedo leerlos
+    int nodoUsuario;
+    cout << "\n¿Que nodo quieres revisar? (Escribe el numero): ";
+    cin >> nodoUsuario;
+
+    if (nodoUsuario >= 0 && nodoUsuario < mapaDeConexiones.size()) {
+        if (mapaDeConexiones[nodoUsuario].empty()) {
+            cout << "Ese nodo existe pero no tiene calles conectadas." << endl;
+        } else {
+            cout << "El nodo " << nodoUsuario << " tiene conexiones con: ";
+            for (int vecino : mapaDeConexiones[nodoUsuario]) {
+                cout << vecino << " ";
+            }
+            cout << endl;
+        }
+    } else {
+        cout << "Ese ID de nodo no esta en el mapa de Pensilvania." << endl;
+    }
     return 0;
 }
