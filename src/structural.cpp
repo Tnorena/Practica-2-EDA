@@ -14,6 +14,8 @@ void ejecutarModuloA(const Grafo* g, const string& archivoSalida) {
     int nodoMax = 0;
     int gradoMax = 0;
 
+    // contamos solo nodos que tienen al menos una arista
+    // y de paso encontramos el de mayor grado para usarlo como origen del BFS
     for (int i = 0; i < g->numNodos; i++) {
         if (!g->adj[i].empty()) {
             nodosReales++;
@@ -38,6 +40,7 @@ void ejecutarModuloA(const Grafo* g, const string& archivoSalida) {
     for (int i = 0; i < g->numNodos; i++) {
         if (visitado[i] || g->adj[i].empty()) continue;
 
+        // BFS desde cada nodo no visitado = una componente nueva
         queue<int> cola;
         cola.push(i);
         visitado[i] = true;
@@ -59,6 +62,8 @@ void ejecutarModuloA(const Grafo* g, const string& archivoSalida) {
         if (tamaño > tamañoPrincipal) tamañoPrincipal = tamaño;
     }
 
+    // el diámetro exacto requeriría un BFS por cada nodo y seria demasiado costoso
+    // aproximamos haciendo un solo BFS desde el nodo de mayor grado
     cout << "Calculando diametro aproximado desde nodo " << nodoMax << "..." << endl;
     vector<int> dist(g->numNodos, -1);
     queue<int> cola;
@@ -82,18 +87,18 @@ void ejecutarModuloA(const Grafo* g, const string& archivoSalida) {
         }
     }
 
-    cout << "\n--- Resultados ---" << endl;
+    cout << "\n Resultados " << endl;
     cout << "Nodos totales (con aristas): " << nodosReales << endl;
     cout << "  Valor SNAP esperado:        1,088,092" << endl;
     cout << "Aristas unicas:               " << g->numAristas << endl;
     cout << "  Valor SNAP esperado:         1,541,898" << endl;
     cout << "Nodos en componente principal: " << tamañoPrincipal << endl;
     cout << "  Valor SNAP esperado:          1,087,562" << endl;
-    cout << "Numero de componentes conexas: " << numComponentes << endl;
+    cout << "Número de componentes conexas: " << numComponentes << endl;
     cout << "Grado promedio: " << promedio << endl;
     cout << "  Valor SNAP esperado: ~2.83" << endl;
     cout << "Nodo de mayor grado: " << nodoMax << " (grado " << gradoMax << ")" << endl;
-    cout << "Diametro aproximado (BFS): " << diametroAprox << endl;
+    cout << "Diámetro aproximado (BFS): " << diametroAprox << endl;
     cout << "  Valor SNAP esperado: 782" << endl;
     cout << "Nodos alcanzados por BFS: " << nodosAlcanzados << endl;
 
@@ -103,18 +108,18 @@ void ejecutarModuloA(const Grafo* g, const string& archivoSalida) {
         return;
     }
 
-    salida << "=== ANALISIS ESTRUCTURAL - roadNet-PA ===" << endl;
-    salida << "Estadistica                        | Valor obtenido   | Valor SNAP" << endl;
-    salida << "-----------------------------------|------------------|------------" << endl;
-    salida << "Nodos (con aristas)                | " << nodosReales     << "       | 1,088,092" << endl;
-    salida << "Aristas unicas                     | " << g->numAristas   << "       | 1,541,898" << endl;
-    salida << "Nodos componente principal         | " << tamañoPrincipal << "       | 1,087,562" << endl;
-    salida << "Numero de componentes conexas      | " << numComponentes  << "           |" << endl;
-    salida << "Grado promedio                     | " << promedio        << "           | ~2.83" << endl;
-    salida << "Nodo de mayor grado                | " << nodoMax         << "           |" << endl;
-    salida << "Grado del nodo maximo              | " << gradoMax        << "           |" << endl;
-    salida << "Diametro aproximado (BFS)          | " << diametroAprox   << "           | 782" << endl;
-    salida << "Nodos alcanzados por BFS           | " << nodosAlcanzados << "       |" << endl;
+    salida << " ANALISIS ESTRUCTURAL - roadNet-PA " << endl;
+    salida << "Estadistica                         Valor obtenido   | Valor SNAP" << endl;
+    salida << "                                                                   " << endl;
+    salida << "Nodos (con aristas)                 " << nodosReales     << "        1,088,092" << endl;
+    salida << "Aristas unicas                      " << g->numAristas   << "        1,541,898" << endl;
+    salida << "Nodos componente principal          " << tamañoPrincipal << "        1,087,562" << endl;
+    salida << "Número de componentes conexas       " << numComponentes  << "           " << endl;
+    salida << "Grado promedio                      " << promedio        << "            ~2.83" << endl;
+    salida << "Nodo de mayor grado                 " << nodoMax         << "           " << endl;
+    salida << "Grado del nodo máximo               " << gradoMax        << "           " << endl;
+    salida << "Diámetro aproximado (BFS)           " << diametroAprox   << "            782" << endl;
+    salida << "Nodos alcanzados por BFS            " << nodosAlcanzados << "       " << endl;
 
     salida.close();
     cout << "\nResultados guardados en: " << archivoSalida << endl;

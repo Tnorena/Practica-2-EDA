@@ -30,11 +30,13 @@ void ejecutarModuloB(const Grafo* g, const string& archivoCSV,
     for (int i = 0; i < 10; i++) {
         cout << "\nEjecutando " << nombres[i] << " (" << origenes[i] << " -> " << destinos[i] << ")..." << endl;
 
+         // solo guardamos el camino en Q01 y Q06, para el resto no vale la pena el overhead
         bool guardarCamino = (nombres[i] == "Q01" || nombres[i] == "Q06");
 
         ResultadoDijkstra resDijk = dijkstra(g, origenes[i], destinos[i], guardarCamino);
         ResultadoBFS      resBFS  = bfs(g, origenes[i], destinos[i], false);
 
+        // estos caminos se usan después en el módulo C
         if (nombres[i] == "Q01") caminoQ01 = resDijk.camino;
         if (nombres[i] == "Q06") caminoQ06 = resDijk.camino;
 
@@ -53,7 +55,8 @@ void ejecutarModuloB(const Grafo* g, const string& archivoCSV,
                  << " | nodos explorados = " << resBFS.nodosExplorados
                  << " | tiempo = " << resBFS.tiempoMs << " ms" << endl;
         }
-
+        
+        // max() significa que no llegó, lo mostramos como INF en el CSV
         string distDijk  = (resDijk.distancia == numeric_limits<long long>::max()) ? "INF" : to_string(resDijk.distancia);
         string saltosBFS = (resBFS.saltos == -1) ? "INF" : to_string(resBFS.saltos);
 

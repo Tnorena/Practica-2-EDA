@@ -7,6 +7,8 @@
 #include <algorithm>
 using namespace std;
 
+// primera pasada por el archivo solo para saber cuántos nodos hay
+// y poder reservar el vector de adyacencia del tamaño exacto
 int encontrarNodoMaximo(const string& nombreArchivo) {
     ifstream archivo(nombreArchivo);
     if (!archivo.is_open()) {
@@ -16,7 +18,7 @@ int encontrarNodoMaximo(const string& nombreArchivo) {
     string linea;
     int u, v, maxNodo = 0;
     while (getline(archivo, linea)) {
-        if (linea.empty() || linea[0] == '#') continue;
+        if (linea.empty() || linea[0] == '#') continue; // saltar comentarios del dataset
         stringstream ss(linea);
         if (ss >> u >> v) {
             maxNodo = max(maxNodo, max(u, v));
@@ -26,7 +28,7 @@ int encontrarNodoMaximo(const string& nombreArchivo) {
 }
 
 Grafo* cargarGrafo(const string& nombreArchivo) {
-    cout << "Pasada 1: buscando nodo maximo..." << endl;
+    cout << "Pasada 1: buscando nodo maximo" << endl;
     int maxNodo = encontrarNodoMaximo(nombreArchivo);
     if (maxNodo < 0) return nullptr;
     cout << "Nodo maximo: " << maxNodo << endl;
@@ -35,17 +37,17 @@ Grafo* cargarGrafo(const string& nombreArchivo) {
 
     ifstream archivo(nombreArchivo);
     if (!archivo.is_open()) {
-        cerr << "Error abriendo archivo en segunda pasada." << endl;
+        cerr << "Error abriendo archivo en segunda pasada" << endl;
         return nullptr;
     }
-
+    // misma semilla = mismos pesos aleatorios siempre
     srand(42);
 
     string linea;
     int u, v;
     int lineasLeidas = 0;
 
-    cout << "Pasada 2: cargando aristas..." << endl;
+    cout << "Pasada 2: cargando aristas" << endl;
 
     while (getline(archivo, linea)) {
         if (linea.empty() || linea[0] == '#') continue;
@@ -53,8 +55,11 @@ Grafo* cargarGrafo(const string& nombreArchivo) {
         if (!(ss >> u >> v)) continue;
         if (u == v) continue;
 
+        // peso aleatorio entre 1 y 10
         int peso = (rand() % 10) + 1;
 
+        // el dataset lista cada arista dos veces (u->v y v->u)
+        // solo insertamos una para no duplicar
         if (u < v) {
             g->agregarArista(u, v, peso);
         }
@@ -65,6 +70,6 @@ Grafo* cargarGrafo(const string& nombreArchivo) {
         }
     }
 
-    cout << "Carga completa. Aristas unicas insertadas: " << g->numAristas << endl;
+    cout << "Carga completa. Aristas unicas insertadas:" << g->numAristas << endl;
     return g;
 }

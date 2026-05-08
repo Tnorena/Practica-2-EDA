@@ -15,6 +15,7 @@ struct Subgrafo {
 Subgrafo construirSubgrafo(const Grafo* g, const vector<int>& caminoQ01, const vector<int>& caminoQ06) {
     Subgrafo sub;
 
+    // unimos los nodos de los dos caminos en un set para eliminar duplicados
     set<int> conjuntoNodos;
     for (int n : caminoQ01) conjuntoNodos.insert(n);
     for (int n : caminoQ06) conjuntoNodos.insert(n);
@@ -25,6 +26,8 @@ Subgrafo construirSubgrafo(const Grafo* g, const vector<int>& caminoQ01, const v
     vector<bool> enSubgrafo(g->numNodos, false);
     for (int n : sub.nodos) enSubgrafo[n] = true;
 
+    // solo incluimos aristas donde los dos extremos están en el subgrafo
+    // u < v para no agregar la misma arista dos veces
     for (int u : sub.nodos) {
         for (auto& arista : g->adj[u]) {
             int v    = arista.first;
@@ -42,6 +45,7 @@ Subgrafo construirSubgrafo(const Grafo* g, const vector<int>& caminoQ01, const v
 // Union-Find para Kruskal
 int padreUF[2000];
 
+// compresión de camino: aplana el árbol para que futuras búsquedas sean más rápidas
 int encontrar(int x) {
     if (padreUF[x] != x) padreUF[x] = encontrar(padreUF[x]);
     return padreUF[x];
@@ -50,7 +54,7 @@ int encontrar(int x) {
 bool unir(int x, int y) {
     int px = encontrar(x);
     int py = encontrar(y);
-    if (px == py) return false;
+    if (px == py) return false; // ya están en el mismo componente, unirlos formaría un ciclo
     padreUF[px] = py;
     return true;
 }
@@ -58,11 +62,14 @@ bool unir(int x, int y) {
 long long calcularMST(const Subgrafo& sub, vector<tuple<int,int,int>>& aristasMST) {
     int n = sub.nodos.size();
     int maxNodo = *max_element(sub.nodos.begin(), sub.nodos.end());
+
+    // mapeamos ids reales a índices 0..n-1 para el Union-Find
     vector<int> indice(maxNodo + 1, -1);
     for (int i = 0; i < n; i++) indice[sub.nodos[i]] = i;
 
     for (int i = 0; i < n; i++) padreUF[i] = i;
 
+    //ordenamos por peso y vamos agregando aristas que no formen ciclos
     vector<tuple<int,int,int>> aristasOrdenadas = sub.aristas;
     sort(aristasOrdenadas.begin(), aristasOrdenadas.end(), [](const auto& a, const auto& b) {
         return get<2>(a) < get<2>(b);
@@ -81,6 +88,8 @@ long long calcularMST(const Subgrafo& sub, vector<tuple<int,int,int>>& aristasMS
     return pesoTotal;
 }
 
+// estado: 0 = no visitado, 1 = en la pila actual, 2 = terminado
+// si llegamos a un nodo con estado 1 (que no sea el padre), hay ciclo
 bool dfsDAG(int nodo, int padreNodo, const vector<vector<int>>& adjLocal, vector<int>& estado) {
     estado[nodo] = 1;
     for (int vecino : adjLocal[nodo]) {
@@ -112,24 +121,24 @@ bool esDAG(const Subgrafo& sub) {
 }
 
 void ejecutarModuloC(const Grafo* g, const vector<int>& caminoQ01, const vector<int>& caminoQ06) {
-    cout << "\n=== MODULO C: Subgrafo, MST y DAG ===" << endl;
+    cout << " MODULO C: Subgrafo, MST y DAG" << endl;
 
     if (caminoQ01.empty() || caminoQ06.empty()) {
         cout << "Error: los caminos Q01 o Q06 estan vacios." << endl;
         return;
     }
 
-    cout << "Construyendo subgrafo inducido..." << endl;
+    cout << "Construyendo subgrafo inducido" << endl;
     Subgrafo sub = construirSubgrafo(g, caminoQ01, caminoQ06);
 
-    cout << "Calculando MST con Kruskal..." << endl;
+    cout << "Calculando MST con Kruskal" << endl;
     vector<tuple<int,int,int>> aristasMST;
     long long pesoMST = calcularMST(sub, aristasMST);
 
-    cout << "Verificando si el subgrafo es DAG..." << endl;
+    cout << "Verificando si el subgrafo es DAG" << endl;
     bool dag = esDAG(sub);
 
-    cout << "\n--- Resultados Modulo C ---" << endl;
+    cout << " Resultados Modulo C " << endl;
     cout << "Nodos en el subgrafo:   " << sub.nodos.size() << endl;
     cout << "Aristas en el subgrafo: " << sub.aristas.size() << endl;
     cout << "Peso total del MST:     " << pesoMST << endl;
@@ -150,7 +159,7 @@ void ejecutarModuloC(const Grafo* g, const vector<int>& caminoQ01, const vector<
 
     ofstream salAnalisis("results/analisis_subgrafo.txt");
     if (salAnalisis.is_open()) {
-        salAnalisis << "=== ANALISIS DEL SUBGRAFO ===" << endl;
+        salAnalisis << " ANALISIS DEL SUBGRAFO " << endl;
         salAnalisis << "Nodos en el subgrafo: " << sub.nodos.size() << endl;
         salAnalisis << "Aristas en el subgrafo: " << sub.aristas.size() << endl;
         salAnalisis << "Peso total del MST: " << pesoMST << endl;

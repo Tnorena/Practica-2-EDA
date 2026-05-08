@@ -7,10 +7,13 @@
 #include <chrono>
 using namespace std;
 
+// sigue los punteros prev desde el destino hasta el inicio
+// y voltea el vector al final para que quede en orden
 vector<int> reconstruirCaminoBFS(const vector<int>& prev, int inicio, int destino) {
     vector<int> camino;
     int actual = destino;
 
+    // si destino no tiene padre y tampoco es el inicio, no hay camino
     if (prev[destino] == -1 && destino != inicio) {
         return camino;
     }
@@ -25,7 +28,7 @@ vector<int> reconstruirCaminoBFS(const vector<int>& prev, int inicio, int destin
 
 ResultadoBFS bfs(const Grafo* g, int inicio, int destino, bool guardarCamino) {
     ResultadoBFS resultado;
-    resultado.saltos = -1;
+    resultado.saltos = -1; // -1 = sin camino
     resultado.nodosExplorados = 0;
     resultado.tiempoMs = 0;
 
@@ -36,8 +39,8 @@ ResultadoBFS bfs(const Grafo* g, int inicio, int destino, bool guardarCamino) {
         return resultado;
     }
 
-    vector<int> dist(n, -1);
-    vector<int> prev(n, -1);
+    vector<int> dist(n, -1); // -1 = no visitado
+    vector<int> prev(n, -1); // -1 = sin padre (nodo raíz o no alcanzado)
 
     dist[inicio] = 0;
     queue<int> cola;
@@ -54,6 +57,7 @@ ResultadoBFS bfs(const Grafo* g, int inicio, int destino, bool guardarCamino) {
 
         for (auto& arista : g->adj[actual]) {
             int vecino = arista.first;
+            // solo encolamos si no fue visitado antes
             if (dist[vecino] == -1) {
                 dist[vecino] = dist[actual] + 1;
                 prev[vecino] = actual;

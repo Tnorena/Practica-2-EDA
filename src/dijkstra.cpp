@@ -8,10 +8,12 @@
 #include <chrono>
 using namespace std;
 
+// sigue prev desde el destino y voltea al final
 vector<int> reconstruirCamino(const vector<int>& prev, int inicio, int destino) {
     vector<int> camino;
     int actual = destino;
 
+    // si destino no tiene padre y tampoco es el inicio, no hay camino
     if (prev[destino] == -1 && destino != inicio) {
         return camino;
     }
@@ -27,7 +29,7 @@ vector<int> reconstruirCamino(const vector<int>& prev, int inicio, int destino) 
 
 ResultadoDijkstra dijkstra(const Grafo* g, int inicio, int destino, bool guardarCamino) {
     ResultadoDijkstra resultado;
-    resultado.distancia = numeric_limits<long long>::max();
+    resultado.distancia = numeric_limits<long long>::max(); // max = sin camino
     resultado.nodosExplorados = 0;
     resultado.tiempoMs = 0;
 
@@ -38,8 +40,9 @@ ResultadoDijkstra dijkstra(const Grafo* g, int inicio, int destino, bool guardar
         return resultado;
     }
 
+    // max = no visitado todavía
     vector<long long> dist(n, numeric_limits<long long>::max());
-    vector<int> prev(n, -1);
+    vector<int> prev(n, -1); // -1 = sin padre
 
     dist[inicio] = 0;
 
@@ -55,6 +58,7 @@ ResultadoDijkstra dijkstra(const Grafo* g, int inicio, int destino, bool guardar
 
         resultado.nodosExplorados++;
 
+        // entrada desactualizada en el heap, la saltamos
         if (d > dist[actual]) continue;
         if (actual == destino) break;
 
