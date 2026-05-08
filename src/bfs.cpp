@@ -1,4 +1,3 @@
-// bfs.cpp - Tomás Noreña y Miguel Muñoz
 #include "graph.hpp"
 #include <iostream>
 #include <vector>

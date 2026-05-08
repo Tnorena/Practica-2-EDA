@@ -1,4 +1,3 @@
-// structural.cpp - Tomás Noreña y Miguel Muñoz
 #include "graph.hpp"
 #include <iostream>
 #include <fstream>
@@ -8,7 +7,7 @@
 using namespace std;
 
 void ejecutarModuloA(const Grafo* g, const string& archivoSalida) {
-    cout << "\n=== MODULO A: Analisis estructural ===" << endl;
+    cout << "\nMODULO A: Analisis estructural" << endl;
 
     int nodosReales = 0;
     int nodoMax = 0;

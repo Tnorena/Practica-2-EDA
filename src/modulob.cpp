@@ -1,4 +1,3 @@
-// modulob.cpp - Tomás Noreña y Miguel Muñoz
 #include "graph.hpp"
 #include <iostream>
 #include <fstream>
@@ -12,7 +11,7 @@ ResultadoBFS bfs(const Grafo* g, int inicio, int destino, bool guardarCamino);
 
 void ejecutarModuloB(const Grafo* g, const string& archivoCSV,
                      vector<int>& caminoQ01, vector<int>& caminoQ06) {
-    cout << "\n=== MODULO B: Consultas P2P ===" << endl;
+    cout << "\nMODULO B: Consultas P2P" << endl;
 
     string nombres[10] = {"Q01","Q02","Q03","Q04","Q05","Q06","Q07","Q08","Q09","Q10"};
     int origenes[10]   = {1, 100, 50000, 200000, 300000, 1, 500000, 250000, 10000, 400000};
@@ -30,13 +29,11 @@ void ejecutarModuloB(const Grafo* g, const string& archivoCSV,
     for (int i = 0; i < 10; i++) {
         cout << "\nEjecutando " << nombres[i] << " (" << origenes[i] << " -> " << destinos[i] << ")..." << endl;
 
-         // solo guardamos el camino en Q01 y Q06, para el resto no vale la pena el overhead
         bool guardarCamino = (nombres[i] == "Q01" || nombres[i] == "Q06");
 
         ResultadoDijkstra resDijk = dijkstra(g, origenes[i], destinos[i], guardarCamino);
         ResultadoBFS      resBFS  = bfs(g, origenes[i], destinos[i], false);
 
-        // estos caminos se usan después en el módulo C
         if (nombres[i] == "Q01") caminoQ01 = resDijk.camino;
         if (nombres[i] == "Q06") caminoQ06 = resDijk.camino;
 
@@ -55,22 +52,16 @@ void ejecutarModuloB(const Grafo* g, const string& archivoCSV,
                  << " | nodos explorados = " << resBFS.nodosExplorados
                  << " | tiempo = " << resBFS.tiempoMs << " ms" << endl;
         }
-        
-        // max() significa que no llegó, lo mostramos como INF en el CSV
-        string distDijk  = (resDijk.distancia == numeric_limits<long long>::max()) ? "INF" : to_string(resDijk.distancia);
-        string saltosBFS = (resBFS.saltos == -1) ? "INF" : to_string(resBFS.saltos);
 
-        csv << nombres[i] << ","
-            << origenes[i] << ","
-            << destinos[i] << ","
-            << distDijk << ","
-            << saltosBFS << ","
-            << resDijk.nodosExplorados << ","
-            << resBFS.nodosExplorados << ","
-            << resDijk.tiempoMs << ","
-            << resBFS.tiempoMs << endl;
-
+        // mostrar y guardar camino para Q01 y Q06
         if (guardarCamino && !resDijk.camino.empty()) {
+            cout << "  Camino (" << resDijk.camino.size() << " nodos): ";
+            for (int j = 0; j < min((int)resDijk.camino.size(), 5); j++) {
+                cout << resDijk.camino[j] << " -> ";
+            }
+            cout << "... -> " << resDijk.camino.back() << endl;
+
+            // guardar camino completo en archivo (lo pide el enunciado)
             string nombreArchivo = "results/camino_" + nombres[i] + ".txt";
             ofstream archivoCamino(nombreArchivo);
             archivoCamino << "Camino de " << origenes[i] << " a " << destinos[i] << endl;
@@ -83,6 +74,19 @@ void ejecutarModuloB(const Grafo* g, const string& archivoCSV,
             archivoCamino.close();
             cout << "  Camino guardado en: " << nombreArchivo << endl;
         }
+
+        string distDijk  = (resDijk.distancia == numeric_limits<long long>::max()) ? "INF" : to_string(resDijk.distancia);
+        string saltosBFS = (resBFS.saltos == -1) ? "INF" : to_string(resBFS.saltos);
+
+        csv << nombres[i] << ","
+            << origenes[i] << ","
+            << destinos[i] << ","
+            << distDijk << ","
+            << saltosBFS << ","
+            << resDijk.nodosExplorados << ","
+            << resBFS.nodosExplorados << ","
+            << resDijk.tiempoMs << ","
+            << resBFS.tiempoMs << endl;
     }
 
     csv.close();

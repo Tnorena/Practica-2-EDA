@@ -1,4 +1,4 @@
-=== ANALISIS DEL SUBGRAFO ===
+ ANALISIS DEL SUBGRAFO 
 Nodos en el subgrafo: 216
 Aristas en el subgrafo: 218
 Peso total del MST: 936
