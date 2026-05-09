@@ -1,4 +1,4 @@
-# Practica-2-EDA
+# EDA_PF_NoreñaTomas_MuñozMiguel
 # Por: Miguel muñoz y Tomás Noreña
 
 Practica final - EDA 2026 - 01
@@ -15,7 +15,7 @@ El programa esta dividido en tres modulos:
 # requisitos para ejecutar
 
 - g++ con soporte para c++17
-- El archivo roadNet-PA.txt en la carpeta data/
+- El archivo roadNet-PA.txt debe estar en la carpeta data/
 
 # instrucciones para ejecutar
 
@@ -61,9 +61,19 @@ EDA_PF_NorenaTomas_MunozMiguel
 
 Desde la raíz del repositorio:
 
-
     g++ -std=c++17 -O2 -o eda_pf src/main.cpp src/graph.cpp src/loader.cpp src/structural.cpp src/dijkstra.cpp src/bfs.cpp src/modulob.cpp src/subgraph.cpp
+    
+**Nota si es usuario de Windows con MSYS2:** antes de compilar, asegurarse de tener g++ en el PATH. Si el comando `g++ --version` no funciona, ejecutar primero:
 
+```bash
+export PATH=$PATH:/mingw64/bin
+```
+
+Luego compilar desde la raíz del repositorio:
+
+```bash
+g++ -std=c++17 -O2 -o eda_pf src/main.cpp src/graph.cpp src/loader.cpp src/structural.cpp src/dijkstra.cpp src/bfs.cpp src/modulob.cpp src/subgraph.cpp
+```
 
 El flag -O2 es importante para que los tiempos sean realistas sobre el dataset completo.
 
